@@ -12,4 +12,10 @@
         android:orderInCategory="200"
         android:title="@string/action_sort"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_adding"
+        android:icon="@drawable/add_circle_outline"
+        android:title="@string/action_add"
+        app:showAsAction="ifRoom" />
+
 </menu>
