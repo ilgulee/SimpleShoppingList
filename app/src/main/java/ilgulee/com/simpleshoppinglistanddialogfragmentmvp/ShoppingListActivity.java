@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class ShoppingListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_shopping_list);
 
         mItemList = new ArrayList<>();
-        mItemList.add("Apple");
-        mItemList.add("1Orange");
-        mItemList.addAll(Arrays.asList("Bread", "juice", "milk", "Toilet paper"));
+//        mItemList.add("Apple");
+//        mItemList.add("1Orange");
+//        mItemList.addAll(Arrays.asList("Bread", "juice", "milk", "Toilet paper"));
         mListView = findViewById(R.id.listView);
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mItemList);
         mListView.setAdapter(mArrayAdapter);
@@ -90,7 +89,7 @@ public class ShoppingListActivity extends AppCompatActivity {
             EditText input = new EditText(this);
             //Alert Dialog to get input item
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Add Shopping Item")
+            builder.setTitle("Add Shopping Item?")
                     .setView(input)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -106,6 +105,25 @@ public class ShoppingListActivity extends AppCompatActivity {
                             dialogInterface.cancel();
                         }
                     }).show();
+            return true;
+        }
+        if(id==R.id.action_clearing){
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setTitle("Remove all list items?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mItemList.clear();
+                            mListView.setAdapter(mArrayAdapter);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    }).show();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
