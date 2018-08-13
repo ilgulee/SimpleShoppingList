@@ -5,16 +5,47 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ShoppingListActivity extends AppCompatActivity {
+    private static final String TAG = "ShoppingListActivity";
 
+    List<String> mItemList=null;
+    ArrayAdapter<String> mArrayAdapter=null;
+    ListView mListView=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list);
+
+        mItemList=new ArrayList<>();
+        mItemList.add("Apple");
+        mItemList.add("Orange");
+        mItemList.addAll(Arrays.asList("Bread","juice","milk","Toilet paper"));
+        mListView=findViewById(R.id.listView);
+        mArrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,mItemList);
+        mListView.setAdapter(mArrayAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item=((TextView)view).getText().toString();
+                Toast.makeText(getApplicationContext(),"you clicekd "+item,Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
