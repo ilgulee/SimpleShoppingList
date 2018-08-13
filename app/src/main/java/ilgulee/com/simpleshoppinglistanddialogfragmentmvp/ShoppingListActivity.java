@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,8 +44,11 @@ public class ShoppingListActivity extends AppCompatActivity {
         mListView.setAdapter(mArrayAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String item = ((TextView) view).getText().toString();
+                if(item.trim().equals(mItemList.get(position).trim())){
+                    removeItemDialogFromList(item,position);
+                }
                 Toast.makeText(getApplicationContext(), "you clicekd " + item, Toast.LENGTH_SHORT).show();
             }
         });
@@ -64,6 +66,28 @@ public class ShoppingListActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void removeItemDialogFromList(String item, int position) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("Remove item "+item+" from list?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mItemList.remove(position);
+                        Collections.sort(mItemList);
+                        saveListToSharedPreference(mItemList,getApplicationContext());
+                        mListView.setAdapter(mArrayAdapter);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                })
+                .show();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
