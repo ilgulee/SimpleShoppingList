@@ -1,6 +1,9 @@
 package ilgulee.com.simpleshoppinglistanddialogfragmentmvp;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,7 +22,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ShoppingListActivity extends AppCompatActivity {
     private static final String TAG = "ShoppingListActivity";
@@ -33,10 +38,8 @@ public class ShoppingListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_list);
 
-        mItemList = new ArrayList<>();
-//        mItemList.add("Apple");
-//        mItemList.add("1Orange");
-//        mItemList.addAll(Arrays.asList("Bread", "juice", "milk", "Toilet paper"));
+        mItemList = getListFromSharedPreference(getApplicationContext());
+
         mListView = findViewById(R.id.listView);
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mItemList);
         mListView.setAdapter(mArrayAdapter);
@@ -96,6 +99,7 @@ public class ShoppingListActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             mItemList.add(firstLetterToCapital(input.getText().toString()));
                             Collections.sort(mItemList);
+                            saveListToSharedPreference(mItemList,getApplicationContext());
                             mListView.setAdapter(mArrayAdapter);
                         }
                     })
@@ -131,5 +135,20 @@ public class ShoppingListActivity extends AppCompatActivity {
 
     private String firstLetterToCapital(String item){
         return item.substring(0,1).toUpperCase()+item.substring(1).toLowerCase();
+    }
+
+    private void saveListToSharedPreference(List<String> list, Context context){
+        Set<String> whatToSave=new HashSet<>(list);
+        SharedPreferences sharedPreferences=context.getSharedPreferences("dbArrayListValue", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putStringSet("shoppingList",whatToSave);
+        editor.apply();
+    }
+
+    private ArrayList<String> getListFromSharedPreference(Context context){
+        Set<String> whatToRetrieve =new HashSet<>();
+        SharedPreferences sharedPreferences=context.getSharedPreferences("dbArrayListValue", Activity.MODE_PRIVATE);
+        whatToRetrieve=sharedPreferences.getStringSet("shoppingList",whatToRetrieve);
+        return new ArrayList<>(whatToRetrieve);
     }
 }
