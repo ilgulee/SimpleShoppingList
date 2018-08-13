@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ShoppingListActivity extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class ShoppingListActivity extends AppCompatActivity {
 
         mItemList=new ArrayList<>();
         mItemList.add("Apple");
-        mItemList.add("Orange");
+        mItemList.add("1Orange");
         mItemList.addAll(Arrays.asList("Bread","juice","milk","Toilet paper"));
         mListView=findViewById(R.id.listView);
         mArrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,mItemList);
@@ -75,6 +76,11 @@ public class ShoppingListActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_sorting) {
+            Collections.sort(mItemList);
+            mListView.setAdapter(mArrayAdapter);
             return true;
         }
 
