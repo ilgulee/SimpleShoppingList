@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,17 +17,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ShoppingListActivity extends AppCompatActivity {
+public class ShoppingListActivity extends AppCompatActivity implements AddAppCompatDialogFragmentNoLayout.AddItemListener{
     private static final String TAG = "ShoppingListActivity";
 
     List<String> mItemList = null;
@@ -38,10 +40,10 @@ public class ShoppingListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_shopping_list);
 
         mItemList = getListFromSharedPreference(getApplicationContext());
-
         mListView = findViewById(R.id.listView);
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, mItemList);
         mListView.setAdapter(mArrayAdapter);
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -113,26 +115,30 @@ public class ShoppingListActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_adding) {
-            EditText input = new EditText(this);
-            //Alert Dialog to get input item
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Add Shopping Item?")
-                    .setView(input)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            mItemList.add(firstLetterToCapital(input.getText().toString()));
-                            Collections.sort(mItemList);
-                            saveListToSharedPreference(mItemList,getApplicationContext());
-                            mListView.setAdapter(mArrayAdapter);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.cancel();
-                        }
-                    }).show();
+            FragmentManager manager=getSupportFragmentManager();
+            DialogFragment addDialog=new AddAppCompatDialogFragmentNoLayout();
+            addDialog.show(manager,"AddAppCompatDialogFragm");
+
+//            EditText input = new EditText(this);
+//            //Alert Dialog to get input item
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Add Shopping Item?")
+//                    .setView(input)
+//                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            mItemList.add(firstLetterToCapital(input.getText().toString()));
+//                            Collections.sort(mItemList);
+//                            saveListToSharedPreference(mItemList,getApplicationContext());
+//                            mListView.setAdapter(mArrayAdapter);
+//                        }
+//                    })
+//                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            dialogInterface.cancel();
+//                        }
+//                    }).show();
             return true;
         }
         if(id==R.id.action_clearing){
@@ -174,5 +180,13 @@ public class ShoppingListActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences=context.getSharedPreferences("dbArrayListValue", Activity.MODE_PRIVATE);
         whatToRetrieve=sharedPreferences.getStringSet("shoppingList",whatToRetrieve);
         return new ArrayList<>(whatToRetrieve);
+    }
+
+    @Override
+    public void addItemToListview(String input) {
+        mItemList.add(firstLetterToCapital(input));
+        Collections.sort(mItemList);
+        saveListToSharedPreference(mItemList,getApplicationContext());
+        mListView.setAdapter(mArrayAdapter);
     }
 }
